@@ -40,13 +40,13 @@ personal-dashboard/
 │  │  ├─ gmail.py           # Mensajes con prioridad (vencer, palabra clave, etc.)
 │  │  ├─ calendar.py        # Eventos del día + próximos 7 días
 │  │  ├─ tasks.py           # Google Tasks → modelo Task
-│  │  ├─ drive.py           | Listado de archivos críticos (documentos pendientes)
+│  │  ├─ drive.py           # Archivos recientes de Mis Archivos (últimos 7 días)
 │  │  ├─ health_strava.py   # Pasos, entrenamientos, peso (Fase 2)
 │  │  ├─ spotify.py         # Canciones vistas hoy, playlists activas (Fase 2)
 │  │  ├─ youtube.py         # Videos vistos, historial recomendado (Fase 2)
 │  │  ├─ weather.py         # Clima + alertas (Fase 2)
 │  │  ├─ rss.py             # Feeds configurables (Fase 2)
-│  │  ├─ github.py          # Issues de repitos (Fase 3)
+│  │  ├─ github.py          # Issues/PRs de repos favoritos (Fase 3)
 │  │  ├─ notes.py           # Obsidian local o Notion (Fase 3)
 │  │  └─ finance.py         # Parseo de correos bancarios (Fase 4)
 │  ├─ models/
@@ -170,7 +170,7 @@ Genera un briefing de 5 líneas en español:
 
 | Aspecto | Implementación |
 |---|---|
-| **Tokens** | Cifrado DPAPI (Windows) → `security.py` usa `pycryptodome` cifrado con `CryptProtectData`. |
+| **Tokens** | Cifrado DPAPI (Windows) vía `ctypes` (`CryptProtectData`/`CryptUnprotectData`); en otros SO, fallback Fernet (`cryptography`) con clave local. |
 | **Datos en SQLite** | Encriptación a nivel de fila con SQLCipher (opcional, se evalúa en Fase 2). |
 | **Acceso al dashboard** | PIN de 4 dígitos al primer acceso de la sesión, cookie de 30 min. |
 | **Salida a IA** | Solo metadatos. El cuerpo del correo nunca sale. El prompt incluye: *"No muestres el contenido del correo, solo resume la acción que el remitente busca"*. |
