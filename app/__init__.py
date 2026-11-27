@@ -1,0 +1,1 @@
+"""Personal Dashboard - FastAPI application for Google Workspace integration and AI briefing."""
