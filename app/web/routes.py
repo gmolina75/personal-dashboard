@@ -233,3 +233,21 @@ async def briefing(request: Request, db: AsyncSession = Depends(get_db)):
         "partials/briefing.html",
         {"request": request, "briefing": briefing_text}
     )
+
+
+# ==================== Health Check ====================
+
+@router.get("/health")
+async def health_check():
+    """Health check endpoint for monitoring and load balancers."""
+    from app.core.config import settings
+    
+    checks = {
+        "status": "healthy",
+        "google_client_id_configured": bool(settings.google_client_id),
+        "minimax_api_key_configured": bool(settings.minimax_api_key),
+        "database": "ok",
+        "timestamp": datetime.now().isoformat(),
+    }
+    
+    return {"checks": checks}

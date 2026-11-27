@@ -5,9 +5,10 @@ import os
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
-from fastapi.response import HTMLResponse
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.db import init_db
 from app.core.scheduler import start_scheduler, stop_scheduler
@@ -16,7 +17,7 @@ from app.web.routes import router
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    format='{"time": "%(asctime)s", "level": "%(levelname)s", "name": "%(name)s", "message": "%(message)s"}'
 )
 logger = logging.getLogger(__name__)
 
@@ -41,6 +42,15 @@ app = FastAPI(
     lifespan=lifespan,
     docs_url="/docs",
     redoc_url="/redoc",
+)
+
+# CORS middleware for future HTML pages and widgets
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For development, restrict in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Mount static files if needed
