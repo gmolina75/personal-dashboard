@@ -1,0 +1,35 @@
+<!-- Record detail modal partial -->
+<div id="record-detail-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl mx-4 md:max-w-2xl transform scale-95 opacity-0 transition-all duration-300 ease-out border border-gray-200">
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-bold text-gray-900">{{ record.title }}</h2>
+            {% if record.url %}
+            <div class="mt-2 text-sm">
+                <a href="{{ record.url }}" target="_blank" class="text-blue-600 hover:underline underline">Ver en {{ record.source }}</a>
+            </div>
+            {% endif %}
+        </div>
+        <div class="p-6">
+            <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ record.snippet }}</p>
+            <div class="flex gap-2">
+                <span class="px-2 py-1 text-xs font-medium rounded-full 
+                    {% if record.priority >= 2 %}bg-red-100 text-red-800{% endif %}
+                    {% if record.priority == 1 %}bg-yellow-100 text-yellow-800{% endif %}
+                    {% if record.priority == 0 %}bg-green-100 text-green-800{% endif %}">
+                    P{{ record.priority }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-show modal when loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        var modal = document.getElementById('record-detail-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex', 'scale-100', 'opacity-100');
+        }
+    });
+</script>

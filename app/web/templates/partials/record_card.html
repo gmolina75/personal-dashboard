@@ -1,0 +1,61 @@
+<!-- Record card partial for dashboard grid -->
+<div class="group rounded-lg border p-3 transition-all hover:border-gray-200 card-hover">
+    {% if record.type == "message" %}
+    <div class="flex items-start gap-3">
+        <div class="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3m4 0h4a1 1 0 001-1v-3m-4 0v6m-6 0h6m-2-4h.007m.993 3L3 12a9 9 0 019.018-8.993m0 0l.993-3m4.993 3L15 12a9 9 0 10-9.996 8.993m0 0l-.993-3m-4.993 3L5 12a9 9 0 009.996 8.993m0 0l.993-3m-4.993 3L11 12a9 9 0 10-9.996 8.993m0 0l-.993-3M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3m4 0h4a1 1 0 001-1v-3m-4 0v6m-6 0h6m-2-4h.007m.993 3L3 12a9 9 0 019.018-8.993m0 0l.993-3m4.993 3L15 12a9 9 0 10-9.996 8.993m0 0l-.993-3m-4.993 3L5 12a9 9 0 009.996 8.993m0 0l.993-3"/>
+            </svg>
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900 truncate">{{ record.title }}</p>
+            <p class="text-xs text-gray-500 line-clamp-1">{{ record.snippet }}</p>
+        </div>
+    </div>
+    {% elif record.type == "event" %}
+    <div class="flex items-start gap-3">
+        <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v6a2 2 0 002 2h2a2 2 0 002-2v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v-6zm7-6v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2h2a2 2 0 012 2z"/>
+            </svg>
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900 truncate">{{ record.title }}</p>
+            <p class="text-xs text-gray-500 line-clamp-1">{{ record.snippet }}</p>
+        </div>
+    </div>
+    {% elif record.type == "task" %}
+    <div class="flex items-start gap-3">
+        <div class="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 16.17L7.55 14.39a2 2 0 011.77-1.88L12 10m0 0l3.5 3.5m-2.571-1.77A8 8 0 104.986 9h.008a8 8 0 0113.977 5.08a8.13 8.13 0 001.066-.086z"/>
+            </svg>
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900 truncate">{{ record.title }}</p>
+            <p class="text-xs text-gray-500 line-clamp-1">{{ record.snippet }}</p>
+        </div>
+    </div>
+    {% elif record.type == "document" %}
+    <div class="flex items-start gap-3">
+        <div class="w-8 h-8 rounded-lg bg-yellow-100 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.5a2 2 0 012 0h6a2 2 0 012 0v6a2 2 0 01-2 2h-6a2 2 0 01-2 0v-6zm.66-2.66a.75.75 0 010 1.5h-1.5a.75.75 0 01-.75-.75v-1.5a.75.75 0 011.5 0v1.5zM12 14h.018M16 12h.018M20 10h.018M8 10h.018M12 16h.018M16 8h.018M20 6h.018"/>
+            </svg>
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-sm font-medium text-gray-900 truncate">{{ record.title }}</p>
+            <p class="text-xs text-gray-500 line-clamp-1">{{ record.snippet }}</p>
+        </div>
+    </div>
+    {% endif %}
+    <button 
+        hx-get="/records/{{ record.id }}" 
+        hx-target="#record-detail-modal" 
+        hx-swap="outerHTML"
+        class="text-xs text-gray-400 hover:text-gray-600 mt-2 w-full py-1 rounded-lg transition-colors"
+        aria-label="Ver detalles"
+    >
+        Ver detalles
+    </button>
+</div>

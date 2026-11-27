@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-900">Personal Dashboard</h1>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <!-- Source Filter -->
+                    <select 
+                        hx-get="/" 
+                        hx-target="#dashboard-content" 
+                        hx-trigger="change"
+                        hx-indicator="#sync-indicator"
+                        name="source"
+                        class="px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                    >
+                        <option value="">Todas las fuentes</option>
+                        {% for src in sources %}
+                        <option value="{{ src }}" {% if src == selected_source %}selected{% endif %}>
+                            {{ src.capitalize() }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    
+                    <!-- Sync Button -->
+                    <button 
+                        hx-post="/sync" 
+                        hx-target="#sync-status" 
+                        hx-swap="innerHTML"
+                        hx-indicator="#sync-indicator"
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center gap-2"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Sincronizar
+                    </button>
+                    <span id="sync-indicator" class="htmx-indicator text-sm text-gray-500">Sincronizando...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="dashboard-content">
+        <!-- Stats Bar -->
+        <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <p class="text-sm text-gray-500">Total de elementos</p>
+                <p class="text-2xl font-bold text-gray-900">{{ total_records }}</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <div>
+                    <p class="text-sm text-gray-500">Última sincronización</p>
+                    <p class="text-sm font-medium text-gray-900" id="sync-status">
+                        {% if last_sync %}
+                            {{ last_sync.strftime('%d/%m/%Y %H:%M') }}
+                        {% else %}
+                            Nunca
+                        {% endif %}
+                    </p>
+                </div>
+                <!-- Briefing Button -->
+                <button 
+                    hx-get="/briefing" 
+                    hx-target="#briefing-content" 
+                    hx-swap="innerHTML"
+                    class="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 flex items-center gap-2"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.734-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                    Briefing IA
+                </button>
+            </div>
+        </div>
+
+        <!-- AI Briefing Section -->
+        <div id="briefing-content" class="mb-6">
+            <!-- Briefing loads here via HTMX -->
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+            <!-- Gmail -->
+            {% if grouped.get('gmail') %}
+            <section class="lg:col-span-2 xl:col-span-1">
+                <h2 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                    </svg>
+                    Gmail ({{ grouped['gmail']|length }})
+                </h2>
+                <div class="space-y-2" hx-ext="scroll-ignore">
+                    {% for record in grouped['gmail'] %}
+                    {% include "partials/record_card.html" %}
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Calendar -->
+            {% if grouped.get('calendar') %}
+            <section>
+                <h2 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm-8 4H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
+                    </svg>
+                    Calendar ({{ grouped['calendar']|length }})
+                </h2>
+                <div class="space-y-2">
+                    {% for record in grouped['calendar'] %}
+                    {% include "partials/record_card.html" %}
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Tasks -->
+            {% if grouped.get('tasks') %}
+            <section>
+                <h2 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                    </svg>
+                    Tasks ({{ grouped['tasks']|length }})
+                </h2>
+                <div class="space-y-2">
+                    {% for record in grouped['tasks'] %}
+                    {% include "partials/record_card.html" %}
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Drive -->
+            {% if grouped.get('drive') %}
+            <section>
+                <h2 class="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M10 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V8a2 2 0 00-2-2h-8l-2-2z"/>
+                    </svg>
+                    Drive ({{ grouped['drive']|length }})
+                </h2>
+                <div class="space-y-2">
+                    {% for record in grouped['drive'] %}
+                    {% include "partials/record_card.html" %}
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+        </div>
+
+        <!-- Empty State -->
+        {% if total_records == 0 %}
+        <div class="text-center py-16">
+            <svg class="mx-auto h-16 w-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h3 class="mt-4 text-lg font-medium text-gray-900">No hay datos</h3>
+            <p class="mt-2 text-gray-500">Haz clic en "Sincronizar" para obtener tus datos de Google Workspace</p>
+        </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}

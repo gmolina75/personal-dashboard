@@ -1,5 +1,5 @@
-"""Models module for Personal Dashboard."""
+"""Models package for SQLAlchemy declarative models."""
 
-from .record import Base, RecordModel
+from app.models.record import RecordModel, Base
 
-__all__ = ["Base", "RecordModel"]
+__all__ = ["RecordModel", "Base"]
