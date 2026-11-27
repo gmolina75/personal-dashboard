@@ -3,6 +3,7 @@
 Extends the registry base connector with additional attributes.
 """
 
+from abc import abstractmethod
 from typing import List, Dict, Any
 from app.core.registry import BaseConnector as RegistryBaseConnector
 
